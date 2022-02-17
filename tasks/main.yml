@@ -1,42 +1,76 @@
 # SPDX-License-Identifier: MIT
 ---
 # Put the tasks for your role here.
-
-# An example of how to set distribution and version specific internal variables
-# (defined in vars/ directory)
-# see https://github.com/oasis-roles/meta_standards#platform-specific-variables
-- name: Set platform/version specific variables
-  include_vars: "{{ __template_vars_file }}"
-  loop:
-    - "{{ ansible_facts['os_family'] }}.yml"
-    - "{{ ansible_facts['distribution'] }}.yml"
-    - >-
-      {{ ansible_facts['distribution'] ~ '_' ~
-      ansible_facts['distribution_major_version'] }}.yml
-    - >-
-      {{ ansible_facts['distribution'] ~ '_' ~
-      ansible_facts['distribution_version'] }}.yml
-  vars:
-    __template_vars_file: "{{ role_path }}/vars/{{ item }}"
-  when: __template_vars_file is file
-
-# Examples of some tasks:
-- name: Ensure required packages are installed
-  package:
-    name: "{{ __template_packages }}"
+- name: "RHEL 7 Keep history of the last {{ pam_pwd_history }} passwords used."
+  ansible.builtin.lineinfile:
+    path: "{{ item }}"
+    insertafter: '^.*pam_pwquality.so.*$'
+    line: "password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }} use_authtok"
     state: present
-
-- name: Ensure required services are enabled and started
-  service:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-  loop: "{{ __template_services }}"
-
-- name: Generate /etc/{{ __template_foo_config }}
-  template:
-    src: "{{ __template_foo_config }}.j2"
-    dest: /etc/{{ __template_foo_config }}
     backup: yes
-    mode: 0400
-  notify: template handler to restart services
+  become: yes
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/password-auth
+  when: ansible_facts['distribution_major_version'] == "7"
+
+- name: RHEL 7 Enforce root for password complexity
+  ansible.builtin.lineinfile:
+    path: "{{ item }}"
+    regexp: '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_users_only\sretry=3\sauthtok_type=$'
+    line: 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type= {{ pam_pwd_enforce_root }}'
+    backup: yes
+  become: yes
+  with_items:
+    - /etc/pam.d/system-auth
+    - /etc/pam.d/password-auth
+  when:
+    - ansible_facts['distribution_major_version'] == "7"
+    - pam_pwd_enforce_root is defined
+    - pam_pwd_enforce_root|length > 0
+
+- name: Set password quality
+  ansible.builtin.blockinfile:
+    path: /etc/security/pwquality.conf
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY LINUX-ADMIN"
+    block: |
+      minlen = {{ pam_pwd_minlen }}
+      dcredit = {{ pam_pwd_dcredit }}
+      ucredit = {{ pam_pwd_ucredit }}
+      lcredit = {{ pam_pwd_lcredit }}
+      ocredit = {{ pam_pwd_ocredit }}
+      minclass = {{ pam_pwd_minclass }}
+    backup: yes
+  when: (ansible_facts['distribution_major_version'] == "7") or
+        (ansible_facts['distribution_major_version'] == "8")
+
+# I use the command module because I don't know a better alternative
+# to configure authselect
+- name: "RHEL 8 Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd"
+  command: "authselect create-profile {{ pam_pwd_policy_name }} -b sssd"
+  when: (ansible_facts['distribution_major_version'] == "8") or
+
+- name: Copy system-auth and password-auth files into place
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}"
+    dest: "/etc/authselect/custom/{{ pam_pwd_policy_name }}/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  become: yes
+  with_items:
+    - system-auth
+    - password-auth
+
+# I use the command module because I don't know a better alternative
+# to configure authselect
+- name: "RHEL 8 Select profile {{ pam_pwd_policy_name }}"
+  ansible.builtin.command: "authselect select custom/{{ pam_pwd_policy_name }}"
+
+- name: RHEL 8 enable-feature with-faillock
+  ansible.builtin.command: authselect enable-feature with-faillock
+
+- name: RHEL 8 apply changes
+  ansible.builtin.command: authselect apply-changes
