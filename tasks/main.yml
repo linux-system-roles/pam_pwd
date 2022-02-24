@@ -1,26 +1,24 @@
 # SPDX-License-Identifier: MIT
 ---
 # Put the tasks for your role here.
-- name: "RHEL 7 Keep history of the last {{ pam_pwd_history }} passwords used."
-  ansible.builtin.lineinfile:
+- name: RHEL 7 Keep history of the last {{ pam_pwd_history }} passwords used.
+  lineinfile:
     path: "{{ item }}"
     insertafter: '^.*pam_pwquality.so.*$'
     line: "password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }} use_authtok"
     state: present
     backup: yes
-  become: yes
   with_items:
     - /etc/pam.d/system-auth
     - /etc/pam.d/password-auth
   when: ansible_facts['distribution_major_version'] == "7"
 
 - name: RHEL 7 Enforce root for password complexity
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: "{{ item }}"
     regexp: '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_users_only\sretry=3\sauthtok_type=$'
     line: 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type= {{ pam_pwd_enforce_root }}'
     backup: yes
-  become: yes
   with_items:
     - /etc/pam.d/system-auth
     - /etc/pam.d/password-auth
@@ -30,10 +28,10 @@
     - pam_pwd_enforce_root|length > 0
 
 - name: Set password quality
-  ansible.builtin.blockinfile:
+  blockinfile:
     path: /etc/security/pwquality.conf
     insertafter: EOF
-    marker: "# {mark} ANSIBLE MANAGED BLOCK BY LINUX-ADMIN"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
       minlen = {{ pam_pwd_minlen }}
       dcredit = {{ pam_pwd_dcredit }}
@@ -47,30 +45,29 @@
 
 # I use the command module because I don't know a better alternative
 # to configure authselect
-- name: "RHEL 8 Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd"
-  command: "authselect create-profile {{ pam_pwd_policy_name }} -b sssd"
-  when: (ansible_facts['distribution_major_version'] == "8") or
+- name: RHEL 8 Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd
+  command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
+  when: (ansible_facts['distribution_major_version'] == "8")
 
 - name: Copy system-auth and password-auth files into place
-  ansible.builtin.template:
+  template:
     src: "{{ role_path }}/templates/{{ item }}"
-    dest: "/etc/authselect/custom/{{ pam_pwd_policy_name }}/{{ item }}"
+    dest: /etc/authselect/custom/{{ pam_pwd_policy_name }}/{{ item }}
     owner: root
     group: root
     mode: '0644'
     backup: yes
-  become: yes
   with_items:
     - system-auth
     - password-auth
 
 # I use the command module because I don't know a better alternative
 # to configure authselect
-- name: "RHEL 8 Select profile {{ pam_pwd_policy_name }}"
-  ansible.builtin.command: "authselect select custom/{{ pam_pwd_policy_name }}"
+- name: RHEL 8 Select profile {{ pam_pwd_policy_name }}
+  command: authselect select custom/{{ pam_pwd_policy_name }}
 
 - name: RHEL 8 enable-feature with-faillock
-  ansible.builtin.command: authselect enable-feature with-faillock
+  command: authselect enable-feature with-faillock
 
 - name: RHEL 8 apply changes
-  ansible.builtin.command: authselect apply-changes
+  command: authselect apply-changes
