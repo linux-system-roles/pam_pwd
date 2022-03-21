@@ -1,12 +1,24 @@
 # I use the command module because I don't know a better alternative
 # to configure authselect
+- name: List authselect profiles
+  command: authselect list
+  register: __pam_pwd_authselect_list
+  changed_when: false
+
 - name: Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd
   command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
+  when: not pam_pwd_policy_name is search(__pam_pwd_authselect_list)
+
+- name: List authselect current profile
+  command: authselect current
+  register: __pam_pwd_authselect_current
+  changed_when: false
 
 # I use the command module because I don't know a better alternative
 # to configure authselect
 - name: Select profile {{ pam_pwd_policy_name }}
   command: authselect select custom/{{ pam_pwd_policy_name }}
+  when: not pam_pwd_policy_name is search(__pam_pwd_authselect_current)
 
 - name: enable-feature with-faillock
   command: authselect enable-feature with-faillock
