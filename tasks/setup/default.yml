@@ -7,6 +7,7 @@
 
 - name: Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd
   command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
+  notify: pam_pwd_authselect_apply
   when: not pam_pwd_policy_name is search(__pam_pwd_authselect_list)
 
 - name: List authselect current profile
@@ -18,13 +19,12 @@
 # to configure authselect
 - name: Select profile {{ pam_pwd_policy_name }}
   command: authselect select custom/{{ pam_pwd_policy_name }}
+  notify: pam_pwd_authselect_apply
   when: not pam_pwd_policy_name is search(__pam_pwd_authselect_current)
 
 - name: enable-feature with-faillock
   command: authselect enable-feature with-faillock
-
-- name: apply changes
-  command: authselect --force apply-changes
+  notify: pam_pwd_authselect_apply
 
 - name: Keep history of the last {{ pam_pwd_history }} passwords used.
   lineinfile:
@@ -37,7 +37,7 @@
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/system-auth
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/password-auth
 
-- name: RHEL 7 Enforce root for password complexity
+- name: Enforce root for password complexity
   lineinfile:
     path: "{{ item }}"
     regexp: '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_users_only\sretry=3\sauthtok_type=$'
