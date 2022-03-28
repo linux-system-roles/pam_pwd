@@ -9,7 +9,9 @@
   debug:
     msg: "{{ __pam_pwd_authselect_list }}"
 
-- name: Create custom authselect profile {{ pam_pwd_policy_name }} from existing profile sssd
+- name: >
+    Create custom authselect profile {{ pam_pwd_policy_name }}
+    from existing profile sssd
   command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
   notify: pam_pwd_authselect_apply
   when: not pam_pwd_policy_name in __pam_pwd_authselect_list.stdout
@@ -17,7 +19,7 @@
 - name: List authselect current profile
   command: authselect current
   register: __pam_pwd_authselect_current
-  ignore_errors: yes
+  failed_when: __pam_pwd_authselect_current.rc not in [0, 2]
   changed_when: false
 
 - name: Dump __pam_pwd_authselect_current
@@ -31,15 +33,23 @@
   notify: pam_pwd_authselect_apply
   when: not pam_pwd_policy_name in __pam_pwd_authselect_current.stdout
 
+- name: List authselect current profile
+  command: authselect current
+  register: __pam_pwd_authselect_features
+  changed_when: false
+
 - name: enable-feature with-faillock
   command: authselect enable-feature with-faillock
   notify: pam_pwd_authselect_apply
+  when: not "with-faillock" in __pam_pwd_authselect_features.stdout
 
 - name: Keep history of the last {{ pam_pwd_history }} passwords used.
   lineinfile:
     path: "{{ item }}"
     insertafter: '^.*pam_pwquality.so.*$'
-    line: "password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }} use_authtok"
+    line: >
+      password    requisite     pam_pwhistory.so remember=
+      {{ pam_pwd_history }} use_authtok
     state: present
     backup: yes
   with_items:
@@ -49,8 +59,12 @@
 - name: Enforce root for password complexity
   lineinfile:
     path: "{{ item }}"
-    regexp: '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_users_only\sretry=3\sauthtok_type=$'
-    line: 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type= {{ pam_pwd_enforce_root }}'
+    regexp: >
+      ^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_user
+      s_only\sretry=3\sauthtok_type=$
+    line: >
+      password    requisite     pam_pwquality.so try_first_pass local_users_on
+      ly retry=3 authtok_type= {{ pam_pwd_enforce_root }}
     backup: yes
   with_items:
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/system-auth

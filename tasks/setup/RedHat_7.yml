@@ -2,7 +2,9 @@
   lineinfile:
     path: "{{ item }}"
     insertafter: '^.*pam_pwquality.so.*$'
-    line: "password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }} use_authtok"
+    line: >
+      "password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }}
+      use_authtok"
     state: present
     backup: yes
   with_items:
@@ -12,8 +14,12 @@
 - name: RHEL 7 Enforce root for password complexity
   lineinfile:
     path: "{{ item }}"
-    regexp: '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_users_only\sretry=3\sauthtok_type=$'
-    line: 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type= {{ pam_pwd_enforce_root }}'
+    regexp: >
+      '^password\s{4}requisite\s{5}pam_pwquality.so\stry_first_pass\slocal_user
+      s_only\sretry=3\sauthtok_type=$'
+    line: >
+      'password    requisite     pam_pwquality.so try_first_pass local_users_on
+      ly retry=3 authtok_type= {{ pam_pwd_enforce_root }}'
     backup: yes
   with_items:
     - /etc/pam.d/system-auth
