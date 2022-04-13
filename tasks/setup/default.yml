@@ -32,9 +32,9 @@
   register: __pam_pwd_authselect_list
   changed_when: false
 
-#- name: Dump __pam_pwd_authselect_list
-#  debug:
-#    msg: "{{ __pam_pwd_authselect_list }}"
+# - name: Dump __pam_pwd_authselect_list
+#   debug:
+#     msg: "{{ __pam_pwd_authselect_list }}"
 
 - name: >
     Create custom authselect profile {{ pam_pwd_policy_name }}
@@ -49,9 +49,9 @@
   failed_when: __pam_pwd_authselect_current.rc not in [0, 2]
   changed_when: false
 
-#- name: Dump __pam_pwd_authselect_current
-#  debug:
-#    msg: "{{ __pam_pwd_authselect_current }}"
+# - name: Dump __pam_pwd_authselect_current
+#   debug:
+#     msg: "{{ __pam_pwd_authselect_current }}"
 
 # I use the command module because I don't know a better alternative
 # to configure authselect
@@ -76,7 +76,7 @@
     insertafter: '^.*pam_pwquality.so.*$'
     firstmatch: yes
     line: >-
-      password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }} 
+      password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }}
       use_authtok
     state: present
     backup: yes
