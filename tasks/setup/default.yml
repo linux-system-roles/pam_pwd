@@ -87,7 +87,7 @@
 - name: Enforce root for password complexity
   lineinfile:
     path: "{{ item }}"
-    regexp: ^password.*requisite.*pam_pwquality\.so.*local_users_only.*$
+    regexp: ^password\s*requisite\s*pam_pwquality\.so\s*local_users_only.*$
     line: >-
       password    requisite     pam_pwquality.so try_first_pass local_users_only
       retry=3 authtok_type= {{ pam_pwd_enforce_root }}

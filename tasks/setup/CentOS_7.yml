@@ -40,7 +40,7 @@
 - name: RHEL 7 configure pam_faillock.so for authfail
   lineinfile:
     path: "{{ item }}"
-    insertafter: ^auth.*sufficient.*pam_unix\.so.*nullok.*try_first_pass.*$
+    insertafter: ^auth\s*sufficient\s*pam_unix\.so\s*nullok\s*try_first_pass.*$
     firstmatch: yes
     line: >-
       auth        [default=die]      pam_faillock.so authfail audit
@@ -55,8 +55,8 @@
   lineinfile:
     path: "{{ item }}"
     regexp: >
-      ^password.*requisite.*pam_pwquality\.so.*try_first_pass.*local_users_only
-      .*retry=3.*authtok_type=.*$
+      ^password\s*requisite\s*pam_pwquality\.so\s*try_first_pass\s*
+      local_users_only\s*retry=3\s*authtok_type=.*$
     line: >
       password    requisite     pam_pwquality.so try_first_pass local_users_only
       retry=3 authtok_type= {{ pam_pwd_enforce_root }}
