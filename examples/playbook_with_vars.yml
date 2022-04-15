@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Example pam_pwd role invocation
+  hosts: all
+  vars:
+    pam_pwd_minlen: "12"
+    pam_pwd_history: "10"
+    pam_pwd_dcredit: "-1"
+    pam_pwd_ucredit: "-1"
+    pam_pwd_lcredit: "-1"
+    pam_pwd_ocredit: "-1"
+    pam_pwd_minclass: "4"
+    pam_pwd_enforce_root: "enforce_for_root"
+    pam_pwd_policy_name: "password-policy"
+    pam_pwd_deny: "5"
+    pam_pwd_unlock_time: "300"
+  roles:
+    - linux-system-roles.pam_pwd

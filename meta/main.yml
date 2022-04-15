@@ -4,7 +4,7 @@ galaxy_info:
   # Replace with role's author name:
   author: Joerg Kastning <joerg(dot)kastning(aet)uni-bielefeld.de>
   # Replace with the real description of what is role's purpose:
-  description: Implementing a password policy for PAM
+  description: Configures PAM to implement a password policy
   # Replace with the company the role's author is member of:
   company: Bielefeld University
 
