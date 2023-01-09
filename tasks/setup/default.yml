@@ -1,29 +1,28 @@
+---
 - name: >-
-    Deny access after {{ pam_pwd_deny }} number of consecutive authentication
-    failures
+    Deny access after number of consecutive authentication
+    failures num {{ pam_pwd_deny }}
   lineinfile:
     path: /etc/security/faillock.conf
     regexp: ^deny=.*$
     line: deny={{ pam_pwd_deny }}
     state: present
-    backup: yes
+    backup: true
 
-- name: Reenable access {{ pam_pwd_unlock_time }} seconds after the lock out.
+- name: Reenable access after the lock out seconds {{ pam_pwd_unlock_time }}
   lineinfile:
     path: /etc/security/faillock.conf
     regexp: ^unlock_time=.*$
     line: unlock_time={{ pam_pwd_unlock_time }}
     state: present
-    backup: yes
+    backup: true
 
 - name: Set option silent in /etc/security/faillock.conf
   lineinfile:
     path: /etc/security/faillock.conf
     line: silent
     state: present
-    backup: yes
-
-# I use the command module because I don't know a better alternative
+    backup: true
 
 # I use the command module because I don't know a better alternative
 # to configure authselect
@@ -37,8 +36,8 @@
 #     msg: "{{ __pam_pwd_authselect_list }}"
 
 - name: >
-    Create custom authselect profile {{ pam_pwd_policy_name }}
-    from existing profile sssd
+    Create custom authselect profile
+    from existing profile sssd {{ pam_pwd_policy_name }}
   command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
   notify: pam_pwd_authselect_apply
   when: not pam_pwd_policy_name in __pam_pwd_authselect_list.stdout
@@ -65,21 +64,21 @@
   register: __pam_pwd_authselect_features
   changed_when: false
 
-- name: enable-feature with-faillock
+- name: Set enable-feature with-faillock
   command: authselect enable-feature with-faillock
   notify: pam_pwd_authselect_apply
   when: not "with-faillock" in __pam_pwd_authselect_features.stdout
 
-- name: Keep history of the last {{ pam_pwd_history }} passwords used.
+- name: Keep history of the last passwords used num {{ pam_pwd_history }}
   lineinfile:
     path: "{{ item }}"
     insertafter: '^.*pam_pwquality.so.*$'
-    firstmatch: yes
+    firstmatch: true
     line: >-
       password    requisite     pam_pwhistory.so remember={{ pam_pwd_history }}
       use_authtok
     state: present
-    backup: yes
+    backup: true
   with_items:
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/system-auth
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/password-auth
@@ -92,10 +91,10 @@
       password    requisite     pam_pwquality.so try_first_pass local_users_only
       retry=3 authtok_type= {{ pam_pwd_enforce_root }}
     state: present
-    backup: yes
+    backup: true
   with_items:
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/system-auth
     - /etc/authselect/custom/{{ pam_pwd_policy_name }}/password-auth
   when:
     - pam_pwd_enforce_root is defined
-    - pam_pwd_enforce_root|length > 0
+    - pam_pwd_enforce_root | length > 0

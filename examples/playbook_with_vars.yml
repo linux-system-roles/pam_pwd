@@ -15,4 +15,4 @@
     pam_pwd_deny: "5"
     pam_pwd_unlock_time: "300"
   roles:
-    - pam_pwd
+    - linux-system-roles.pam_pwd
