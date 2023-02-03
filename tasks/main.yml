@@ -2,9 +2,9 @@
 ---
 # Put the tasks for your role here.
 - name: Perform platform/version specific tasks
-  include_tasks: "{{ lookup('first_found', __rolename_ff_params) }}"
+  include_tasks: "{{ lookup('first_found', __pam_pwd_ff_params) }}"
   vars:
-    __rolename_ff_params:
+    __pam_pwd_ff_params:
       files:
         - "{{ ansible_facts['distribution'] ~ '_' ~
               ansible_facts['distribution_version'] }}.yml"
@@ -28,4 +28,4 @@
       lcredit = {{ pam_pwd_lcredit }}
       ocredit = {{ pam_pwd_ocredit }}
       minclass = {{ pam_pwd_minclass }}
-    backup: yes
+    backup: true
