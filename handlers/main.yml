@@ -5,3 +5,4 @@
 - name: Apply authselect changes
   listen: pam_pwd_authselect_apply
   command: authselect apply-changes
+  changed_when: true
