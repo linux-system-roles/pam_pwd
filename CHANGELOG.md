@@ -1,6 +1,13 @@
 Changelog
 =========
 
+[0.0.4] - 2023-04-27
+--------------------
+
+### Other Changes
+
+- ci: Add commitlint GitHub action to ensure conventional commits with feedback
+
 [0.0.3] - 2023-04-13
 --------------------
 
