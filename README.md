@@ -43,18 +43,15 @@ pam_pwd_unlock_time: "300" # Time in seconds after which an account is unlocked 
 
 You can keep these default values if they fit your requirements. Or you can overwrite the defaults by specifiny some or all of them in places like `vars/main.yml`, `group_vars/`, `host_vars/` or your playbook.
 
-## Dependencies
-
-None.
-
 ## Example Playbook
 
 The following code block shows the simplest playbook to run this role:
 
 ```yaml
-- hosts: all
+- name: Manage pam password
+  hosts: all
   roles:
-    - pam_pwd
+    - linux-system-roles.pam_pwd
 ```
 
 More examples can be found in the [`examples/`](examples) directory.
