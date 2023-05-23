@@ -1,6 +1,16 @@
 Changelog
 =========
 
+[0.0.5] - 2023-05-23
+--------------------
+
+### Other Changes
+
+- docs: Consistent contributing.md for all roles - allow role specific contributing.md section
+- docs: remove unused Dependencies section in README
+- ci: update tox-lsr to version 3.0.0
+- test: ensure facts for tests_include_vars_from_parent.yml
+
 [0.0.4] - 2023-04-27
 --------------------
 
