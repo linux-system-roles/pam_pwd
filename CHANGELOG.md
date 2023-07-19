@@ -1,6 +1,15 @@
 Changelog
 =========
 
+[0.0.6] - 2023-07-19
+--------------------
+
+### Other Changes
+
+- ci: Add pull request template and run commitlint on PR title only (#32)
+- ci: Rename commitlint to PR title Lint, echo PR titles from env var (#33)
+- ci: ansible-lint - ignore var-naming[no-role-prefix] (#34)
+
 [0.0.5] - 2023-05-23
 --------------------
 
