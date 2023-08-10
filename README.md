@@ -1,20 +1,21 @@
 # pam_pwd
+
 ![CI Testing](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
 
 This role configures PAM to implement a password policy to meet requirements like minimum password length, complexity, keep password history, etc. It supports:
 
-  - Fedora >= 35
-  - RHEL 7
-  - RHEL 8
-  - RHEL 9 Beta
-  - CentOS 7
-  - CentOS Stream 8
-  - CentOS Stream 9
+- Fedora >= 35
+- RHEL 7
+- RHEL 8
+- RHEL 9 Beta
+- CentOS 7
+- CentOS Stream 8
+- CentOS Stream 9
 
 The role was tested with the following versions of Ansible:
 
-  - ansible-core 2.11
-  - ansible-core 2.12
+- ansible-core 2.11
+- ansible-core 2.12
 
 To use this role you have to specify the role variables which are described below.
 
@@ -63,4 +64,4 @@ MIT.
 ## Author Information
 
 Author: Joerg Kastning  
-Contact: joerg.kastning@uni-bielefeld.de
+Contact: <joerg.kastning@uni-bielefeld.de>
