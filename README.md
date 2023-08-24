@@ -1,6 +1,8 @@
 # pam_pwd
 
-![CI Testing](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
+[![ansible-lint.yml](https://github.com/linux-system-roles/pam_pwd/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/linux-system-roles/pam_pwd/actions/workflows/ansible-lint.yml) [![ansible-test.yml](https://github.com/linux-system-roles/pam_pwd/actions/workflows/ansible-test.yml/badge.svg)](https://github.com/linux-system-roles/pam_pwd/actions/workflows/ansible-test.yml) [![markdownlint.yml](https://github.com/linux-system-roles/pam_pwd/actions/workflows/markdownlint.yml/badge.svg)](https://github.com/linux-system-roles/pam_pwd/actions/workflows/markdownlint.yml) [![woke.yml](https://github.com/linux-system-roles/pam_pwd/actions/workflows/woke.yml/badge.svg)](https://github.com/linux-system-roles/pam_pwd/actions/workflows/woke.yml)
+
+---
 
 This role configures PAM to implement a password policy to meet requirements like minimum password length, complexity, keep password history, etc. It supports:
 
