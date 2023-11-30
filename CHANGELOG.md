@@ -1,6 +1,15 @@
 Changelog
 =========
 
+[0.0.8] - 2023-11-29
+--------------------
+
+### Other Changes
+
+- Bump actions/checkout from 3 to 4 (#40)
+- ci: ensure dependabot git commit message conforms to commitlint (#43)
+- ci: tox-lsr version 3.1.1 (#47)
+
 [0.0.7] - 2023-09-08
 --------------------
 
