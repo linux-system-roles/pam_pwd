@@ -39,7 +39,7 @@
     Create custom authselect profile
     from existing profile sssd {{ pam_pwd_policy_name }}
   command: authselect create-profile {{ pam_pwd_policy_name }} -b sssd
-  notify: pam_pwd_authselect_apply
+  notify: Pam_pwd_authselect_apply
   when: not pam_pwd_policy_name in __pam_pwd_authselect_list.stdout
   changed_when: true
 
@@ -57,7 +57,7 @@
 # to configure authselect
 - name: Select profile {{ pam_pwd_policy_name }}
   command: authselect select --force custom/{{ pam_pwd_policy_name }}
-  notify: pam_pwd_authselect_apply
+  notify: Pam_pwd_authselect_apply
   when: not pam_pwd_policy_name in __pam_pwd_authselect_current.stdout
   changed_when: true
 
@@ -68,7 +68,7 @@
 
 - name: Set enable-feature with-faillock
   command: authselect enable-feature with-faillock
-  notify: pam_pwd_authselect_apply
+  notify: Pam_pwd_authselect_apply
   when: not "with-faillock" in __pam_pwd_authselect_features.stdout
   changed_when: true
 
