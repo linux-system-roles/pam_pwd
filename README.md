@@ -64,4 +64,4 @@ MIT.
 ## Author Information
 
 Author: Joerg Kastning  
-Contact: <joerg.kastning@uni-bielefeld.de>
+Contact: <joerg@redhat.com>
