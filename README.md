@@ -35,7 +35,7 @@ pam_pwd_dcredit: "-1" # defines minimum credit for having required digits in pas
 pam_pwd_ucredit: "-1" # defines minimum credit for having uppercase characters in password.
 pam_pwd_lcredit: "-1" # defines minimum credit for having lowercase characters in password.
 pam_pwd_ocredit: "-1" # defines minimum credit for having other characters in password.
-pam_pwd_minclass: "4" # defines minium number of required character classes in new password.
+pam_pwd_minclass: "4" # defines minimum number of required character classes in new password.
 pam_pwd_enforce_root: "enforce_for_root" # (""|"enforce_for_root") defines whether or not to enforce password complexity for user root.
 pam_pwd_policy_name: "password-policy" # RHEL 8 only. Define name of the custom authselect profile.
 pam_pwd_deny: "5" # Set the number of failed login attempts after which the account is locked.
