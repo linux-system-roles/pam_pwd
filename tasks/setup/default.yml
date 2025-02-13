@@ -9,7 +9,7 @@
     state: present
     backup: true
 
-- name: Reenable access after the lock out seconds {{ pam_pwd_unlock_time }}
+- name: Re-enable access after the lock out seconds {{ pam_pwd_unlock_time }}
   lineinfile:
     path: /etc/security/faillock.conf
     regexp: ^unlock_time=.*$
