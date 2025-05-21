@@ -24,4 +24,6 @@ galaxy_info:
     - pam
     - password
     - policy
+    - container
+    - containerbuild
 dependencies: []
