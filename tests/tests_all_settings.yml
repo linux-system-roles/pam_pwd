@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Test role with all settings
+  hosts: all
+
+  tasks:
+    - name: Run the role
+      include_role:
+        name: linux-system-roles.pam_pwd
+      vars:
+        # /etc/security/pwquality.conf settings
+        pam_pwd_minlen: "12"
+        pam_pwd_dcredit: "-1"
+        pam_pwd_ucredit: "-2"
+        pam_pwd_lcredit: "-3"
+        pam_pwd_ocredit: "-4"
+        pam_pwd_minclass: "4"
+
+        # PAM config settings
+        pam_pwd_history: "10"
+        pam_pwd_enforce_root: "enforce_for_root"
+
+        # /etc/security/faillock.conf settings
+        pam_pwd_deny: "5"
+        pam_pwd_unlock_time: "300"
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Get custom settings from pwquality.conf
+      command: cat /etc/security/pwquality.conf
+      register: pwquality_conf
+      changed_when: false
+
+    - name: Check pwquality.conf settings
+      assert:
+        that:
+          - "'minlen = 12' in pwquality_conf.stdout_lines"
+          - "'dcredit = -1' in pwquality_conf.stdout_lines"
+          - "'ucredit = -2' in pwquality_conf.stdout_lines"
+          - "'lcredit = -3' in pwquality_conf.stdout_lines"
+          - "'ocredit = -4' in pwquality_conf.stdout_lines"
+          - "'minclass = 4' in pwquality_conf.stdout_lines"
+
+    - name: Read PAM config files
+      command: "cat {{ item }}"
+      register: pam_conf
+      changed_when: false
+      loop:
+        # /etc/pam.d/* are authselect symlinks (on anything but RHEL 7), check the effective end result
+        - /etc/pam.d/password-auth
+        - /etc/pam.d/system-auth
+
+    - name: Verify PAM config file settings
+      assert:
+        that:
+          - item.stdout is search('pam_pwhistory.so.*remember=10')
+          - item.stdout is search('pam_pwquality.so.*enforce_for_root')
+      loop: "{{ pam_conf.results }}"
+
+    - name: Validate faillock.conf settings on OSes other than RHEL 7
+      when: ansible_facts['os_family'] != 'RedHat' or
+            ansible_facts.distribution_major_version != '7'
+      block:
+        - name: Get faillock.conf settings
+          command: cat /etc/security/faillock.conf
+          register: faillock_conf
+          changed_when: false
+
+        - name: Check faillock.conf settings
+          assert:
+            that:
+              - "'deny=5' in faillock_conf.stdout_lines"
+              - "'unlock_time=300' in faillock_conf.stdout_lines"
