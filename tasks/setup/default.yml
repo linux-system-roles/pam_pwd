@@ -24,6 +24,11 @@
     state: present
     backup: true
 
+- name: Ensure authselect is installed
+  package:
+    name: authselect
+    state: present
+
 # I use the command module because I don't know a better alternative
 # to configure authselect
 - name: List authselect profiles
