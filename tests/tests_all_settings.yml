@@ -23,9 +23,17 @@
         # /etc/security/faillock.conf settings
         pam_pwd_deny: "5"
         pam_pwd_unlock_time: "300"
+      when: not __bootc_validation | d(false)
 
     - name: Flush handlers
       meta: flush_handlers
+
+    - name: Create QEMU deployment during bootc end-to-end test
+      delegate_to: localhost
+      become: false
+      command: "{{ lsr_scriptdir }}/bootc-buildah-qcow.sh {{ ansible_host }}"
+      changed_when: true
+      when: ansible_connection == "buildah"
 
     - name: Get custom settings from pwquality.conf
       command: cat /etc/security/pwquality.conf
