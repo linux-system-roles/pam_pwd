@@ -1,6 +1,27 @@
 Changelog
 =========
 
+[0.1.1] - 2026-01-06
+--------------------
+
+### Other Changes
+
+- ci: Bump actions/checkout from 4 to 5 (#104)
+- ci: rollout several recent changes to CI testing (#106)
+- ci: support openSUSE Leap in qemu/kvm test matrix (#107)
+- ci: use the new epel feature to enable EPEL for testing farm (#108)
+- ci: use tox-lsr 3.12.0 for osbuild_config.yml feature (#110)
+- ci: use JSON format for __bootc_validation (#111)
+- ci: Bump actions/github-script from 7 to 8 (#112)
+- ci: Bump actions/upload-artifact from 4 to 5 (#113)
+- ci: use versioned upload-artifact instead of master; bump codeql-action to v4; bump upload-artifact to v5 (#114)
+- ci: bump tox-lsr to 3.13.0 (#115)
+- ci: bump tox-lsr to 3.14.0 - this moves standard-inventory-qcow2 to tox-lsr (#116)
+- ci: Bump actions/checkout from 5 to 6 (#117)
+- ci: add qemu tests for Fedora 43, drop Fedora 41 (#118)
+- ci: Bump actions/upload-artifact from 5 to 6 (#119)
+- docs: fix copyright in license (#120)
+
 [0.1.0] - 2025-06-16
 --------------------
 
