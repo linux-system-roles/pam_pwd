@@ -5,8 +5,8 @@
 
   tasks:
     - name: Run the role
-      include_role:
-        name: linux-system-roles.pam_pwd
+      include_tasks: tasks/run_role_with_clear_facts.yml
+      when: not __bootc_validation | d(false)
       vars:
         # /etc/security/pwquality.conf settings
         pam_pwd_minlen: "12"
@@ -23,7 +23,6 @@
         # /etc/security/faillock.conf settings
         pam_pwd_deny: "5"
         pam_pwd_unlock_time: "300"
-      when: not __bootc_validation | d(false)
 
     - name: Flush handlers
       meta: flush_handlers
@@ -68,7 +67,7 @@
 
     - name: Validate faillock.conf settings on OSes other than RHEL 7
       when: ansible_facts['os_family'] != 'RedHat' or
-            ansible_facts.distribution_major_version != '7'
+            ansible_facts['distribution_major_version'] != '7'
       block:
         - name: Get faillock.conf settings
           command: cat /etc/security/faillock.conf
