@@ -1,6 +1,16 @@
 Changelog
 =========
 
+[0.2.1] - 2026-06-24
+--------------------
+
+### Other Changes
+
+- ci: Bump actions/github-script from 8 to 9 (#142)
+- ci: Add config file for CodeRabbit with custom rules (#143)
+- ci: Skip reviews for PRs with [citest_skip] in the title (#144)
+- test: remove unused files [citest_skip] (#145)
+
 [0.2.0] - 2026-04-28
 --------------------
 
