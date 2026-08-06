@@ -13,6 +13,8 @@ pam_pwd_policy_name: "password-policy"
 pam_pwd_deny: "5"
 pam_pwd_unlock_time: "300"
 
+__pam_pwd_write_log_file: false
+
 # BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
 # Ansible distribution identifiers that the role treats like RHEL
 __pam_pwd_rh_distros:
