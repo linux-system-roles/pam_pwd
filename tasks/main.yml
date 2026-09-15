@@ -4,6 +4,9 @@
 - name: Set variables
   include_tasks: set_vars.yml
 
+- name: Validate role parameters
+  ansible.builtin.include_tasks: assert_role_vars.yml
+
 - name: Perform platform/version specific tasks
   include_tasks: "{{ lookup('first_found', __pam_pwd_ff_params) }}"
   vars:

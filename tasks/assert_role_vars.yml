@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Assert pam_pwd_minlen is a non-negative integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_minlen | string | trim is match('^[0-9]+$')
+    fail_msg: >-
+      pam_pwd_minlen must be a non-negative integer, got
+      {{ pam_pwd_minlen }}
+
+- name: Assert pam_pwd_history is a non-negative integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_history | string | trim is match('^[0-9]+$')
+    fail_msg: >-
+      pam_pwd_history must be a non-negative integer, got
+      {{ pam_pwd_history }}
+
+- name: Assert pam_pwd_dcredit is an integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_dcredit | string | trim is match('^-?[0-9]+$')
+    fail_msg: >-
+      pam_pwd_dcredit must be an integer (optionally negative), got
+      {{ pam_pwd_dcredit }}
+
+- name: Assert pam_pwd_ucredit is an integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_ucredit | string | trim is match('^-?[0-9]+$')
+    fail_msg: >-
+      pam_pwd_ucredit must be an integer (optionally negative), got
+      {{ pam_pwd_ucredit }}
+
+- name: Assert pam_pwd_lcredit is an integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_lcredit | string | trim is match('^-?[0-9]+$')
+    fail_msg: >-
+      pam_pwd_lcredit must be an integer (optionally negative), got
+      {{ pam_pwd_lcredit }}
+
+- name: Assert pam_pwd_ocredit is an integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_ocredit | string | trim is match('^-?[0-9]+$')
+    fail_msg: >-
+      pam_pwd_ocredit must be an integer (optionally negative), got
+      {{ pam_pwd_ocredit }}
+
+- name: Assert pam_pwd_minclass is an integer between 0 and 4
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_minclass | string | trim is match('^[0-9]+$')
+      - pam_pwd_minclass | int >= 0
+      - pam_pwd_minclass | int <= 4
+    fail_msg: >-
+      pam_pwd_minclass must be an integer between 0 and 4 inclusive,
+      got {{ pam_pwd_minclass }}
+
+- name: Assert pam_pwd_policy_name has a valid authselect profile name format
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_policy_name | string | trim is match('^[A-Za-z0-9_.-]+$')
+    fail_msg: >-
+      pam_pwd_policy_name must contain only letters, digits, dots,
+      hyphens, and underscores, got {{ pam_pwd_policy_name }}
+
+- name: Assert pam_pwd_deny is a non-negative integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_deny | string | trim is match('^[0-9]+$')
+    fail_msg: >-
+      pam_pwd_deny must be a non-negative integer, got
+      {{ pam_pwd_deny }}
+
+- name: Assert pam_pwd_unlock_time is a non-negative integer
+  ansible.builtin.assert:
+    that:
+      - >-
+        pam_pwd_unlock_time | string | trim is match('^[0-9]+$')
+    fail_msg: >-
+      pam_pwd_unlock_time must be a non-negative integer, got
+      {{ pam_pwd_unlock_time }}
