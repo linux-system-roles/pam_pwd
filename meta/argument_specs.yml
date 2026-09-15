@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: MIT
+---
+argument_specs:
+  main:
+    short_description: The pam_pwd role.
+    description: >
+      The pam_pwd role allows you to configure PAM to implement a
+      password policy, including password length, complexity, and
+      history requirements. It also configures account lockout after
+      repeated failed authentication attempts using `pam_faillock`.
+
+      This role will configure `/etc/security/pwquality.conf` and
+      `/etc/security/faillock.conf`. On distributions that use
+      `authselect`, it will create and select a custom authselect
+      profile to apply the PAM changes. On RHEL 7, which does not use
+      authselect, the PAM configuration files are edited directly.
+    options:
+      pam_pwd_minlen:
+        type: str
+        default: "12"
+        description: >
+          The minimum acceptable length for a new password. This value
+          is written to the `minlen` setting in
+          `/etc/security/pwquality.conf`.
+      pam_pwd_history:
+        type: str
+        default: "10"
+        description: >
+          The number of previous passwords that cannot be reused. This
+          value is written to the `remember` option of
+          `pam_pwhistory.so` in the PAM configuration.
+      pam_pwd_dcredit:
+        type: str
+        default: "-1"
+        description: >
+          The credit or requirement for digit characters in a new
+          password. This value is written to the `dcredit` setting in
+          `/etc/security/pwquality.conf`. A negative value such as
+          `-1` requires at least that many digit characters.
+      pam_pwd_ucredit:
+        type: str
+        default: "-1"
+        description: >
+          The credit or requirement for uppercase characters in a new
+          password. This value is written to the `ucredit` setting in
+          `/etc/security/pwquality.conf`. A negative value such as
+          `-1` requires at least that many uppercase characters.
+      pam_pwd_lcredit:
+        type: str
+        default: "-1"
+        description: >
+          The credit or requirement for lowercase characters in a new
+          password. This value is written to the `lcredit` setting in
+          `/etc/security/pwquality.conf`. A negative value such as
+          `-1` requires at least that many lowercase characters.
+      pam_pwd_ocredit:
+        type: str
+        default: "-1"
+        description: >
+          The credit or requirement for other (non-alphanumeric)
+          characters in a new password. This value is written to the
+          `ocredit` setting in `/etc/security/pwquality.conf`. A
+          negative value such as `-1` requires at least that many
+          other characters.
+      pam_pwd_minclass:
+        type: str
+        default: "4"
+        description: >
+          The minimum number of required character classes (digits,
+          uppercase, lowercase, and other characters) in a new
+          password. This value is written to the `minclass` setting
+          in `/etc/security/pwquality.conf`.
+      pam_pwd_enforce_root:
+        type: str
+        default: enforce_for_root
+        choices:
+          - enforce_for_root
+          - ""
+        description: >
+          Whether password complexity requirements are enforced for
+          the `root` user. Requirements are enforced for root
+          (`enforce_for_root`) or not enforced for root (empty
+          string).
+      pam_pwd_policy_name:
+        type: str
+        default: password-policy
+        description: >
+          The name of the custom authselect profile created and
+          selected by the role to apply the password policy. Not used
+          on RHEL 7, which does not use authselect.
+      pam_pwd_deny:
+        type: str
+        default: "5"
+        description: >
+          The number of consecutive failed authentication attempts
+          after which the account is locked. This value is written to
+          the `deny` setting in `/etc/security/faillock.conf`.
+      pam_pwd_unlock_time:
+        type: str
+        default: "300"
+        description: >
+          The number of seconds an account remains locked after it has
+          been locked due to too many failed authentication attempts.
+          This value is written to the `unlock_time` setting in
+          `/etc/security/faillock.conf`.

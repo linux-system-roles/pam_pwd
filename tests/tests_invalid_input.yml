@@ -1,0 +1,280 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Verify invalid parameters are rejected
+  hosts: all
+  tasks:
+    - name: Run invalid input tests
+      block:
+        # ====================================================
+        # Section 1: Verify role works with valid defaults
+        # ====================================================
+        - name: Run role with valid defaults
+          ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+
+        # ====================================================
+        # Section 2: argument_specs validation (Ansible 2.11+)
+        # ====================================================
+        - name: Run argument specs validation tests
+          when: ansible_version.full is version("2.11", ">=")
+          block:
+            # --- Test: invalid choice ---
+            - name: Argument specs reject invalid pam_pwd_enforce_root choice
+              block:
+                - name: Run role with invalid pam_pwd_enforce_root value
+                  ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+                  vars:
+                    pam_pwd_enforce_root: invalid_choice_value
+              rescue:
+                - name: Mark invalid pam_pwd_enforce_root choice rejected
+                  ansible.builtin.set_fact:
+                    __invalid_input_enforce_root_choice_failed: true
+
+            - name: Assert invalid pam_pwd_enforce_root choice was rejected
+              ansible.builtin.assert:
+                that:
+                  - __invalid_input_enforce_root_choice_failed | default(false)
+                fail_msg: >-
+                  argument_specs should reject pam_pwd_enforce_root values
+                  outside the allowed set (enforce_for_root, "")
+
+        # ====================================================
+        # Section 3: assert_role_vars validation (all versions)
+        # ====================================================
+
+        # --- Test: pam_pwd_minlen not an integer ---
+        - name: Assert rejects pam_pwd_minlen as a non-integer string
+          block:
+            - name: Run role with pam_pwd_minlen as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_minlen: not_a_number
+          rescue:
+            - name: Mark pam_pwd_minlen format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_minlen_format_failed: true
+
+        - name: Assert pam_pwd_minlen non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_minlen_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_minlen when it is
+              not a non-negative integer
+
+        # --- Test: pam_pwd_history not an integer ---
+        - name: Assert rejects pam_pwd_history as a non-integer string
+          block:
+            - name: Run role with pam_pwd_history as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_history: not_a_number
+          rescue:
+            - name: Mark pam_pwd_history format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_history_format_failed: true
+
+        - name: Assert pam_pwd_history non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_history_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_history when it is
+              not a non-negative integer
+
+        # --- Test: pam_pwd_dcredit not an integer ---
+        - name: Assert rejects pam_pwd_dcredit as a non-integer string
+          block:
+            - name: Run role with pam_pwd_dcredit as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_dcredit: not_a_number
+          rescue:
+            - name: Mark pam_pwd_dcredit format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_dcredit_format_failed: true
+
+        - name: Assert pam_pwd_dcredit non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_dcredit_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_dcredit when it is
+              not an integer
+
+        # --- Test: pam_pwd_ucredit not an integer ---
+        - name: Assert rejects pam_pwd_ucredit as a non-integer string
+          block:
+            - name: Run role with pam_pwd_ucredit as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_ucredit: not_a_number
+          rescue:
+            - name: Mark pam_pwd_ucredit format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_ucredit_format_failed: true
+
+        - name: Assert pam_pwd_ucredit non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_ucredit_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_ucredit when it is
+              not an integer
+
+        # --- Test: pam_pwd_lcredit not an integer ---
+        - name: Assert rejects pam_pwd_lcredit as a non-integer string
+          block:
+            - name: Run role with pam_pwd_lcredit as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_lcredit: not_a_number
+          rescue:
+            - name: Mark pam_pwd_lcredit format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_lcredit_format_failed: true
+
+        - name: Assert pam_pwd_lcredit non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_lcredit_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_lcredit when it is
+              not an integer
+
+        # --- Test: pam_pwd_ocredit not an integer ---
+        - name: Assert rejects pam_pwd_ocredit as a non-integer string
+          block:
+            - name: Run role with pam_pwd_ocredit as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_ocredit: not_a_number
+          rescue:
+            - name: Mark pam_pwd_ocredit format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_ocredit_format_failed: true
+
+        - name: Assert pam_pwd_ocredit non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_ocredit_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_ocredit when it is
+              not an integer
+
+        # --- Test: pam_pwd_minclass not an integer ---
+        - name: Assert rejects pam_pwd_minclass as a non-integer string
+          block:
+            - name: Run role with pam_pwd_minclass as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_minclass: not_a_number
+          rescue:
+            - name: Mark pam_pwd_minclass format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_minclass_format_failed: true
+
+        - name: Assert pam_pwd_minclass non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_minclass_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_minclass when it is
+              not a non-negative integer
+
+        # --- Test: pam_pwd_minclass out of range ---
+        - name: Assert rejects pam_pwd_minclass above 4
+          block:
+            - name: Run role with pam_pwd_minclass set to 5
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_minclass: "5"
+          rescue:
+            - name: Mark pam_pwd_minclass range rejected
+              ansible.builtin.set_fact:
+                __invalid_input_minclass_range_failed: true
+
+        - name: Assert pam_pwd_minclass above 4 was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_minclass_range_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_minclass values
+              greater than 4
+
+        # --- Test: pam_pwd_policy_name invalid characters ---
+        - name: Assert rejects pam_pwd_policy_name with invalid characters
+          block:
+            - name: Run role with pam_pwd_policy_name containing a slash
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_policy_name: invalid/policy name
+          rescue:
+            - name: Mark pam_pwd_policy_name format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_policy_name_format_failed: true
+
+        - name: Assert pam_pwd_policy_name with invalid characters was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_policy_name_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_policy_name values
+              containing characters other than letters, digits, dots,
+              hyphens, and underscores
+
+        # --- Test: pam_pwd_deny not an integer ---
+        - name: Assert rejects pam_pwd_deny as a non-integer string
+          block:
+            - name: Run role with pam_pwd_deny as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_deny: not_a_number
+          rescue:
+            - name: Mark pam_pwd_deny format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_deny_format_failed: true
+
+        - name: Assert pam_pwd_deny non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_deny_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_deny when it is
+              not a non-negative integer
+
+        # --- Test: pam_pwd_unlock_time not an integer ---
+        - name: Assert rejects pam_pwd_unlock_time as a non-integer string
+          block:
+            - name: Run role with pam_pwd_unlock_time as a non-integer string
+              ansible.builtin.include_tasks: tasks/run_role_with_clear_facts.yml
+              vars:
+                pam_pwd_unlock_time: not_a_number
+          rescue:
+            - name: Mark pam_pwd_unlock_time format rejected
+              ansible.builtin.set_fact:
+                __invalid_input_unlock_time_format_failed: true
+
+        - name: Assert pam_pwd_unlock_time non-integer was rejected
+          ansible.builtin.assert:
+            that:
+              - __invalid_input_unlock_time_format_failed | default(false)
+            fail_msg: >-
+              assert_role_vars should reject pam_pwd_unlock_time when it
+              is not a non-negative integer
+
+      always:
+        - name: Clear test facts
+          ansible.builtin.set_fact:
+            __invalid_input_enforce_root_choice_failed:
+            __invalid_input_minlen_format_failed:
+            __invalid_input_history_format_failed:
+            __invalid_input_dcredit_format_failed:
+            __invalid_input_ucredit_format_failed:
+            __invalid_input_lcredit_format_failed:
+            __invalid_input_ocredit_format_failed:
+            __invalid_input_minclass_format_failed:
+            __invalid_input_minclass_range_failed:
+            __invalid_input_policy_name_format_failed:
+            __invalid_input_deny_format_failed:
+            __invalid_input_unlock_time_format_failed:
+          tags: tests::cleanup
